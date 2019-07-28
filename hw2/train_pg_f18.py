@@ -243,8 +243,8 @@ class Agent(object):
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
-            sy_logprob_n = -0.5 * ((sy_ac_na - sy_mean) / tf.exp(sy_logstd)) ** 2
-            sy_logprob_n = tf.reduce_sum(sy_logprob_n, axis=1)
+            sy_logprob_temp = -0.5 * ((sy_ac_na - sy_mean) / tf.exp(sy_logstd)) ** 2
+            sy_logprob_n = tf.reduce_sum(sy_logprob_temp, axis=1)
         return sy_logprob_n
 
     def build_computation_graph(self):
@@ -543,7 +543,7 @@ class Agent(object):
             target_n = None 
 
         #====================================================================================#
-        #                           ----------PROBLEM 3----------
+        #                           ----------PROBLEM 3---s-------
         # Performing the Policy Update
         #====================================================================================#
 
