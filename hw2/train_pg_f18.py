@@ -236,13 +236,15 @@ class Agent(object):
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_CODE_HERE
-            sy_prob_n = tf.nn.softmax(sy_logits_na)  # obtain probability from logits
-            sy_logprob_n = tf.log(sy_prob_n[:, sy_ac_na])
+            sy_logprob_n = - tf.nn.sparse_softmax_cross_entropy_with_logits(
+                labels=sy_ac_na,
+                logits=sy_logits_na
+            )
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
             sy_logprob_n = -0.5 * ((sy_ac_na - sy_mean) / tf.exp(sy_logstd)) ** 2
-            sy_logprob_n = tf.reduce_mean(sy_logprob_n, axis=1) 
+            sy_logprob_n = tf.reduce_mean(sy_logprob_n, axis=1)
         return sy_logprob_n
 
     def build_computation_graph(self):
