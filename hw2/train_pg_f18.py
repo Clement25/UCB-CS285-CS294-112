@@ -434,7 +434,7 @@ class Agent(object):
             for i in range(num_path):
                 path_rewards = re_n[i]
                 coef = self.gamma ** np.arange(len(path_rewards))
-                q_estimates = np.sum(path_rewards * coef)
+                q_estimates = [sum(path_rewards * coef)] * len(path_rewards)
                 q_n += q_estimates
             # raise NotImplementedError
         return np.array(q_n)
