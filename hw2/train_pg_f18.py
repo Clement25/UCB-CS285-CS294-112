@@ -166,7 +166,7 @@ class Agent(object):
                 n_layers=self.n_layers,
                 size=self.size
             )
-            sy_logstd = tf.get_variable(shape=[None],name="sy_logstd")
+            sy_logstd = tf.get_variable(shape=[self.ac_dim], name="sy_logstd")
             return (sy_mean, sy_logstd)
 
     #========================================================================================#
