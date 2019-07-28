@@ -51,7 +51,7 @@ def build_mlp(input_placeholder, output_size, scope, n_layers, size, activation=
             inputs=last_out,
             units=output_size,
             activation=output_activation,
-            name="output"
+            name="output_layer"
         )
     return output_placeholder
 
@@ -333,8 +333,7 @@ class Agent(object):
             #====================================================================================#
             #                           ----------PROBLEM 3----------
             #====================================================================================#
-            with tf.Session() as sess:
-                ac = sess.run(self.sy_sampled_ac, feed_dict={self.sy_ob_no: ob.reshape(1, -1)})  # YOUR CODE HERE
+            ac = self.sess.run(self.sy_sampled_ac, feed_dict={self.sy_ob_no: ob.reshape(1, -1)})  # YOUR CODE HERE
 
             ac = ac[0]
             acs.append(ac)
@@ -559,8 +558,7 @@ class Agent(object):
 
         # YOUR_CODE_HERE
         feed_dict = {self.sy_ob_no: ob_no, self.sy_ac_na: ac_na, self.sy_adv_n: adv_n}
-        with tf.Session() as sess:
-            sess.run(self.update_op, feed_dict=feed_dict)
+        self.sess.run(self.update_op, feed_dict=feed_dict)
         # raise NotImplementedError
 
 
