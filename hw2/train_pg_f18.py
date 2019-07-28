@@ -244,7 +244,7 @@ class Agent(object):
             sy_mean, sy_logstd = policy_parameters
             # YOUR_CODE_HERE
             sy_logprob_n = -0.5 * ((sy_ac_na - sy_mean) / tf.exp(sy_logstd)) ** 2
-            sy_logprob_n = tf.reduce_mean(sy_logprob_n, axis=1)
+            sy_logprob_n = tf.reduce_sum(sy_logprob_n, axis=1)
         return sy_logprob_n
 
     def build_computation_graph(self):
@@ -334,7 +334,6 @@ class Agent(object):
             #                           ----------PROBLEM 3----------
             #====================================================================================#
             ac = self.sess.run(self.sy_sampled_ac, feed_dict={self.sy_ob_no: ob.reshape(1, -1)})  # YOUR CODE HERE
-
             ac = ac[0]
             acs.append(ac)
             ob, rew, done, _ = env.step(ac)
@@ -423,22 +422,22 @@ class Agent(object):
         q_n = []
         if self.reward_to_go:
             for i in range(num_path):
-                step_rewards = re_n[i]
-                q_estimates = [0] * step_rewards.shape[0]
-                q_estimates[-1] = step_rewards[-1]
-                for j in range(len(step_rewards) - 2, -1, -1):
-                    q_estimates[j] = self.gamma * q_estimates[j+1] + step_rewards[j]
+                path_rewards = re_n[i]
+                q_estimates = [0] * path_rewards.shape[0]
+                q_estimates[-1] = path_rewards[-1]
+                for j in range(len(path_rewards) - 2, -1, -1):
+                    q_estimates[j] = self.gamma * q_estimates[j+1] + path_rewards[j]
                 
                 q_n += q_estimates
             # raise NotImplementedError
         else:
             for i in range(num_path):
-                step_rewards = re_n[i]
-                coef = self.gamma ** np.arange(len(step_rewards))
-                q_estimates = np.sum(step_rewards * coef)
+                path_rewards = re_n[i]
+                coef = self.gamma ** np.arange(len(path_rewards))
+                q_estimates = np.sum(path_rewards * coef)
                 q_n += q_estimates
             # raise NotImplementedError
-        return q_n
+        return np.array(q_n)
 
     def compute_advantage(self, ob_no, q_n):
         """
@@ -504,8 +503,7 @@ class Agent(object):
         if self.normalize_advantages:
             # On the next line, implement a trick which is known empirically to reduce variance
             # in policy gradient methods: normalize adv_n to have mean zero and std=1.
-            mean, std = tf.reduce_mean(adv_n), tf.reduced_std(adv_n)
-            adv_n = (adv_n - mean) / (std + 1e-8) # YOUR_CODE_HERE
+            adv_n = (adv_n - adv_n.mean()) / (adv_n.std() + 1e-8) # YOUR_CODE_HERE
         return q_n, adv_n
 
     def update_parameters(self, ob_no, ac_na, q_n, adv_n):
