@@ -426,8 +426,8 @@ class Agent(object):
                 step_rewards = re_n[i]
                 q_estimates = [0] * step_rewards.shape[0]
                 q_estimates[-1] = step_rewards[-1]
-                for j in range(len(step_rewards)-2, -1, -1):
-                    q_estimates[j] = self.gamma * q_estimates[j+1] + re_n[i][j]
+                for j in range(len(step_rewards) - 2, -1, -1):
+                    q_estimates[j] = self.gamma * q_estimates[j+1] + step_rewards[j]
                 
                 q_n += q_estimates
             # raise NotImplementedError
@@ -438,7 +438,6 @@ class Agent(object):
                 q_estimates = np.sum(step_rewards * coef)
                 q_n += q_estimates
             # raise NotImplementedError
-        assert len(q_n) == sum_of_path_lengths
         return q_n
 
     def compute_advantage(self, ob_no, q_n):
