@@ -296,16 +296,15 @@ class Agent(object):
         # neural network baseline. These will be used to fit the neural network baseline. 
         #========================================================================================#
         if self.nn_baseline:
-            raise NotImplementedError
             self.baseline_prediction = tf.squeeze(build_mlp(
-                                    self.sy_ob_no, 
-                                    1, 
+                                    self.sy_ob_no,
+                                    1,
                                     "nn_baseline",
                                     n_layers=self.n_layers,
                                     size=self.size))
             # YOUR_CODE_HERE
-            self.sy_target_n = None
-            baseline_loss = None
+            self.sy_target_n = tf.placeholder(shape=[None], name="sy_target_n", dtype=tf.float32)
+            baseline_loss = tf.nn.l2_loss(self.sy_target_n - self.baseline_prediction)
             self.baseline_update_op = tf.train.AdamOptimizer(self.learning_rate).minimize(baseline_loss)
 
     def sample_trajectories(self, itr, env):
@@ -313,7 +312,7 @@ class Agent(object):
         timesteps_this_batch = 0
         paths = []
         while True:
-            animate_this_episode=(len(paths)==0 and (itr % 10 == 0) and self.animate)
+            animate_this_episode=(len(paths) == 0 and (itr % 10 == 0) and self.animate)
             path = self.sample_trajectory(env, animate_this_episode)
             paths.append(path)
             timesteps_this_batch += pathlength(path)
@@ -468,8 +467,8 @@ class Agent(object):
             # Hint #bl1: rescale the output from the nn_baseline to match the statistics
             # (mean and std) of the current batch of Q-values. (Goes with Hint
             # #bl2 in Agent.update_parameters.
-            raise NotImplementedError
-            b_n = None # YOUR CODE HERE
+            b_n = self.sess.run(self.baseline_prediction, feed_dict={self.sy_ob_no: ob_no})  # YOUR CODE HERE
+            b_n = (b_n - b_n.mean()) / (b_n.std() + 1e-8) * (q_n.std() + 1e-8) + q_n.mean()
             adv_n = q_n - b_n
         else:
             adv_n = q_n.copy()
@@ -503,7 +502,7 @@ class Agent(object):
         if self.normalize_advantages:
             # On the next line, implement a trick which is known empirically to reduce variance
             # in policy gradient methods: normalize adv_n to have mean zero and std=1.
-            adv_n = (adv_n - adv_n.mean()) / (adv_n.std() + 1e-8) # YOUR_CODE_HERE
+            adv_n = (adv_n - adv_n.mean()) / (adv_n.std() + 1e-8)  # YOUR_CODE_HERE
         return q_n, adv_n
 
     def update_parameters(self, ob_no, ac_na, q_n, adv_n):
@@ -539,8 +538,8 @@ class Agent(object):
             # Agent.compute_advantage.)
 
             # YOUR_CODE_HERE
-            raise NotImplementedError
-            target_n = None 
+            target_n = (q_n - q_n.mean()) / (q_n.std() + 1e-8)
+            self.sess.run(self.baseline_update_op, feed_dict={self.sy_ob_no: ob_no, self.sy_target_n: target_n})
 
         #====================================================================================#
         #                           ----------PROBLEM 3---s-------
