@@ -10,6 +10,7 @@ import logz
 import os
 import time
 import inspect
+import time
 from multiprocessing import Process
 
 #============================================================================================#
@@ -704,6 +705,9 @@ def main():
 
     processes = []
 
+    # only for problem 8-1
+    start = time.time()
+    
     for e in range(args.n_experiments):
         seed = args.seed + 10*e
         print('Running experiment with seed %d'%seed)
@@ -737,6 +741,11 @@ def main():
 
     for p in processes:
         p.join()
+    
+    end = time.time()
+    print("##########################")
+    print("##Total Training Time:{}##".format(end-start))
+    print("##########################")
 
 if __name__ == "__main__":
     main()
