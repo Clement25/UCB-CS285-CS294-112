@@ -254,7 +254,7 @@ class QLearner(object):
     idx = self.replay_buffer.store_frame(self.last_obs)
     obs = self.replay_buffer.encode_recent_observation()
 
-    if self.model_initialized and random.rand() > self.exploration.value(self.t):
+    if self.model_initialized and random.random() > self.exploration.value(self.t):
       action = self.session.run(self.best_q_idx, feed_dict={self.obs_t_ph: obs})[0]
     else:
       action = self.env.action_space.sample()
