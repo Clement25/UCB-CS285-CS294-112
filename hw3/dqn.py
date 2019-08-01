@@ -169,10 +169,11 @@ class QLearner(object):
       q_t = tf.gather(params=q_, indices=slice_indices)
 
     y = self.rew_t_ph + (1. - self.done_mask_ph) * gamma * q_t
-    y_ = tf.gather(params=q_, indices=[[i, self.act_t_ph[i]] for i in range(self.batch_size)])
+    slice_indices = [[i, self.act_t_ph[i]] for i in range(self.batch_size)]
+    y_ = tf.gather(params=q_, indices=slice_indices)
     print(q_.get_shape(), self.act_t_ph.get_shape())
     print(y.get_shape(), y_.get_shape())
-    print(indices)
+    print(slice_indices)
 
     self.total_error = tf.reduce_mean(huber_loss(y - y_))
 
