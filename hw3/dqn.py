@@ -161,16 +161,18 @@ class QLearner(object):
     q_target = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='target_q_func', reuse=False)
 
     if double_q:
-      q_t = tf.reduce_max(q_, axis=1)
+      q_t = tf.reduce_max(q_target, axis=1)
     else:
       q_t = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='q_func', reuse=True)
       ac = tf.argmax(q_t, axis=1)
       slice_indices = [[i, ac[i]] for i in range(self.batch_size)]
       q_t = tf.gather(params=q_, indices=slice_indices)
+      print(ac.get_shape())
+
+    print(q_.get_shape(), q_target.get_shape())
 
     y = self.rew_t_ph + (1. - self.done_mask_ph) * gamma * q_t
     y_ = tf.gather(params=q_, indices=[[i, self.act_t_ph[i]] for i in range(self.batch_size)])
-    print(tf.shape(y),tf.shape(y_))
     self.total_error = tf.reduce_mean(huber_loss(y - y_))
 
     # define an op to obtain the index (action) of best q
