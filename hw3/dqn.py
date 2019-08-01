@@ -166,7 +166,7 @@ class QLearner(object):
       q_t = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='q_func', reuse=True)
       ac = tf.argmax(q_t, axis=1)
       slice_indices = [[i, ac[i]] for i in range(self.batch_size)]
-      q_t = tf.gather(params=q_t, indices=slice_indices)
+      q_t = tf.gather(params=q_, indices=slice_indices)
 
     y = self.rew_t_ph + gamma * q_t
     y_ = tf.gather(params=q_, indices=[[i, self.act_t_ph[i]] for i in range(self.batch_size)])
@@ -319,10 +319,10 @@ class QLearner(object):
           })
         self.model_initialized = True
       
-      feed_dict = {self.obs_t_ph: obs_batch,
+      feed_dict = {self.obs_t_ph: obs_t_batch,
                   self.obs_tp1_ph: obs_tp1_batch,
-                  self.act_t_ph: act_batch,
-                  self.rew_t_ph: rew_batch,
+                  self.act_t_ph: act_t_batch,
+                  self.rew_t_ph: rew_t_batch,
                   self.done_mask_ph: done_mask,
                   self.learning_rate: self.optimizer_spec.lr_schedule.value(self.t)}
       
