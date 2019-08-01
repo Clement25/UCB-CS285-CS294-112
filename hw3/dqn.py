@@ -172,6 +172,7 @@ class QLearner(object):
     print(q_.get_shape(), q_target.get_shape())
 
     y = self.rew_t_ph + (1. - self.done_mask_ph) * gamma * q_t
+    print(self.act_t_ph.get_shape())
     y_ = tf.gather(params=q_, indices=[[i, self.act_t_ph[i]] for i in range(self.batch_size)])
 
     print(y.get_shape(),y_.get_shape())
