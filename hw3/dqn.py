@@ -168,8 +168,9 @@ class QLearner(object):
       slice_indices = [[i, ac[i]] for i in range(self.batch_size)]
       q_t = tf.gather(params=q_, indices=slice_indices)
 
-    y = self.rew_t_ph + gamma * q_t
+    y = self.rew_t_ph + (1. - self.done_mask_ph) * gamma * q_t
     y_ = tf.gather(params=q_, indices=[[i, self.act_t_ph[i]] for i in range(self.batch_size)])
+    print(tf.shape(y),tf.shape(y_))
     self.total_error = tf.reduce_mean(huber_loss(y - y_))
 
     # define an op to obtain the index (action) of best q
