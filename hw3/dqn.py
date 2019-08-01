@@ -161,7 +161,7 @@ class QLearner(object):
     q_target = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='target_q_func', reuse=False)
 
     if double_q:
-      q_t = tf.reduce_max(q_t, axis=1)
+      q_t = tf.reduce_max(q_, axis=1)
     else:
       q_t = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='q_func', reuse=True)
       ac = tf.argmax(q_t, axis=1)
