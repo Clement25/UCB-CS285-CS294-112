@@ -323,7 +323,7 @@ class QLearner(object):
                   self.obs_tp1_ph: obs_tp1_batch,
                   self.act_t_ph: act_batch,
                   self.rew_t_ph: rew_batch,
-                  self.done_mask_ph: done_mask
+                  self.done_mask_ph: done_mask,
                   self.learning_rate: self.optimizer_spec.lr_schedule.value(self.t)}
       
       _ = self.sess.run(self.train_fn, feed_dict=feed_dict)
@@ -331,7 +331,7 @@ class QLearner(object):
 
       if self.num_param_updates % self.target_update_freq == 0:
         _ = self.session.run(self.update_target_fn)
-        
+
     self.t += 1
 
   def log_progress(self):
