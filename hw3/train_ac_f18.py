@@ -36,7 +36,21 @@ def build_mlp(input_placeholder, output_size, scope, n_layers, size, activation=
         Hint: use tf.layers.dense    
     """
     # YOUR HW2 CODE HERE
-    raise NotImplementedError
+    with tf.variable_scope(scope) as scope:
+        last_out = input_placeholder
+        for i in range(n_layers-1):
+            last_out = tf.layers.dense(
+                    inputs=last_out,
+                    units=size,
+                    activation=activation,
+                    name="hidden{}".format(i+1)
+                )
+        output_placeholder = tf.layers.dense(
+            inputs=last_out,
+            units=output_size,
+            activation=output_activation,
+            name="output_layer"
+        )
     return output_placeholder
 
 def pathlength(path):
@@ -98,7 +112,7 @@ class Agent(object):
         else:
             sy_ac_na = tf.placeholder(shape=[None, self.ac_dim], name="ac", dtype=tf.float32) 
         # YOUR HW2 CODE HERE
-        sy_adv_n = None
+        sy_adv_n = tf.placeholder(shape=[None], name="adv", dtype=tf.float32)
         return sy_ob_no, sy_ac_na, sy_adv_n
 
     def policy_forward_pass(self, sy_ob_no):
@@ -275,7 +289,7 @@ class Agent(object):
                 time.sleep(0.1)
             obs.append(ob)
             raise NotImplementedError
-            ac = None # YOUR HW2 CODE HERE
+            ac = self.sess.run(self.sy_sampled_ac, feed_dict={self.sy_ob_no: ob.reshape(1, -1)})  # YOUR CODE HERE
             ac = ac[0]
             acs.append(ac)
             ob, rew, done, _ = env.step(ac)

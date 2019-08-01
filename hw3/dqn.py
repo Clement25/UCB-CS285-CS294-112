@@ -252,7 +252,7 @@ class QLearner(object):
     obs = self.replay_buffer.encode_recent_observation()
 
     if self.model_initialized and random.rand() > self.exploration.value(self.t):
-      action = self.sess.run(self.best_q_idx, feed_dict={self.obs_t_ph: obs})[0]
+      action = self.session.run(self.best_q_idx, feed_dict={self.obs_t_ph: obs})[0]
     else:
       action = self.env.action_space.sample()
 
@@ -326,7 +326,7 @@ class QLearner(object):
                   self.done_mask_ph: done_mask,
                   self.learning_rate: self.optimizer_spec.lr_schedule.value(self.t)}
       
-      _ = self.sess.run(self.train_fn, feed_dict=feed_dict)
+      _ = self.session.run(self.train_fn, feed_dict=feed_dict)
       self.num_param_updates += 1
 
       if self.num_param_updates % self.target_update_freq == 0:
