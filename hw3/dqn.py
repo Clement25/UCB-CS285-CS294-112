@@ -157,8 +157,26 @@ class QLearner(object):
     # Older versions of TensorFlow may require using "VARIABLES" instead of "GLOBAL_VARIABLES"
     # Tip: use huber_loss (from dqn_utils) instead of squared error when defining self.total_error
     ######
+    q_ = q_func(img_in=obs_t_float, num_actions=self.num_actions, scope='q_func', reuse=False)
+    q_target = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='target_q_func', reuse=False)
 
-    # YOUR CODE HERE
+    if double_q:
+      q_t = tf.reduce_max(q_t, axis=1)
+    else:
+      q_t = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='q_func', reuse=True)
+      ac = tf.argmax(q_t, axis=1)
+      slice_indices = [[i, ac[i]] for i in range(self.batch_size)]
+      q_t = tf.gather(params=q_t, indices=slice_indices)
+
+    y = self.rew_t_ph + gamma * q_t
+    y_ = tf.gather(params=q_, indices=[[i, self.act_t_ph[i]] for i in range(self.batch_size)])
+    self.total_error = tf.reduce_mean(huber_loss(y - y_))
+
+    # define an op to obtain the index (action) of best q
+    self.best_q_idx = tf.math.argmax(q_, axis=1)
+
+    q_func_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='q_func')
+    target_q_func_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='target_q_func')
 
     ######
 
@@ -230,6 +248,22 @@ class QLearner(object):
 
     # YOUR CODE HERE
 
+    idx = self.replay_buffer.store_frame(self.last_obs)
+    obs = self.replay_buffer.encode_recent_observation()
+
+    if self.model_initialized and random.rand() > self.exploration.value(self.t):
+      action = self.sess.run(self.best_q_idx, feed_dict={self.obs_t_ph: obs})[0]
+    else:
+      action = self.env.action_space.sample()
+
+    obs, reward, done, info = self.env.step(action)
+    self.replay_buffer.store_effect(idx, action, reward, done)
+
+    if done:
+      self.last_obs = self.env.reset()
+    else:
+      self.last_obs = obs
+
   def update_model(self):
     ### 3. Perform experience replay and train the network.
     # note that this is only done if the replay buffer contains enough samples
@@ -274,9 +308,30 @@ class QLearner(object):
       #####
 
       # YOUR CODE HERE
-
+      
+      obs_t_batch, act_t_batch, rew_t_batch, obs_tp1_batch, done_mask = \
+        self.replay_buffer.sample(self.batch_size)
+      
+      if not self.model_initialized:
+        initialize_interdependent_variables(self.session, tf.global_variables(), {
+              self.obs_t_ph: obs_t_batch,
+              self.obs_tp1_ph: obs_tp1_batch,
+          })
+        self.model_initialized = True
+      
+      feed_dict = {self.obs_t_ph: obs_batch,
+                  self.obs_tp1_ph: obs_tp1_batch,
+                  self.act_t_ph: act_batch,
+                  self.rew_t_ph: rew_batch,
+                  self.done_mask_ph: done_mask
+                  self.learning_rate: self.optimizer_spec.lr_schedule.value(self.t)}
+      
+      _ = self.sess.run(self.train_fn, feed_dict=feed_dict)
       self.num_param_updates += 1
 
+      if self.num_param_updates % self.target_update_freq == 0:
+        _ = self.session.run(self.update_target_fn)
+        
     self.t += 1
 
   def log_progress(self):
@@ -314,4 +369,3 @@ def learn(*args, **kwargs):
     # observation
     alg.update_model()
     alg.log_progress()
-
