@@ -165,11 +165,11 @@ class QLearner(object):
     else:
       q_t = q_func(img_in=obs_tp1_float, num_actions=self.num_actions, scope='q_func', reuse=True)
       ac = tf.argmax(q_t, axis=1)
-      indices = tf.unstack([np.arange(self.batch_size), ac], axis=1)
+      indices = tf.stack([np.arange(self.batch_size), ac], axis=1)
       q_t = tf.gather_nd(params=q_t, indices=indices, name='get_target_Q')
 
     y = self.rew_t_ph + (1. - self.done_mask_ph) * gamma * q_t
-    indices = tf.unstack([np.arange(self.batch_size), self.act_t_ph], axis=1)
+    indices = tf.stack([np.arange(self.batch_size), self.act_t_ph], axis=1)
     print(indices.get_shape(), q_.get_shape())
     y_ = tf.gather(params=q_, indices=indices, name='get_pred_Q')
 
