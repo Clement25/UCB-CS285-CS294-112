@@ -172,6 +172,7 @@ class QLearner(object):
     indices = tf.stack([np.arange(self.batch_size), self.act_t_ph], axis=1)
     print(indices.get_shape(), q_.get_shape())
     y_ = tf.gather(params=q_, indices=indices, name='get_pred_Q')
+    print(y_.get_shape())
 
     self.total_error = tf.reduce_mean(huber_loss(y - y_))
 
