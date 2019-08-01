@@ -172,6 +172,7 @@ class QLearner(object):
     y_ = tf.gather(params=q_, indices=[[i, self.act_t_ph[i]] for i in range(self.batch_size)])
     print(q_.get_shape(), self.act_t_ph.get_shape())
     print(y.get_shape(), y_.get_shape())
+    print(indices)
 
     self.total_error = tf.reduce_mean(huber_loss(y - y_))
 
