@@ -55,7 +55,7 @@ def atari_learn(env,
     exploration_schedule = PiecewiseSchedule(
         [
             (0, 1.0),
-            (1e6, 0.1),
+            (num_iterations / 10, 0.1),
             (num_iterations / 2, 0.01),
         ], outside_value=0.01
     )
@@ -124,7 +124,7 @@ def main():
     print('random seed = %d' % seed)
     env = get_env(task, seed)
     session = get_session()
-    atari_learn(env, session, num_timesteps=2e8)
+    atari_learn(env, session, num_timesteps=4e6)
 
 if __name__ == "__main__":
     main()
