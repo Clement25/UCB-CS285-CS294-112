@@ -3,6 +3,7 @@ import gym
 from gym import wrappers
 import os.path as osp
 import random
+import os
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.layers as layers
@@ -116,6 +117,8 @@ def get_env(task, seed):
     return env
 
 def main():
+    if not(os.path.exists('data')):
+        os.makedirs('data')
     # Get Atari games.
     task = gym.make('PongNoFrameskip-v4')
 
