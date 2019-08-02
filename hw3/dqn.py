@@ -2,6 +2,7 @@ import uuid
 import time
 import pickle
 import sys
+import logz
 import gym.spaces
 import itertools
 import numpy as np

@@ -117,8 +117,6 @@ def get_env(task, seed):
     return env
 
 def main():
-    if not(os.path.exists('data')):
-        os.makedirs('data')
     # Get Atari games.
     task = gym.make('PongNoFrameskip-v4')
 
