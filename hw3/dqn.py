@@ -256,7 +256,7 @@ class QLearner(object):
 
     if self.model_initialized and random.random() > self.exploration.value(self.t):
       action = self.session.run(self.best_q_idx,
-        feed_dict={self.obs_t_ph: obs.reshape(1, -1)})[0]
+        feed_dict={self.obs_t_ph: [obs]})[0]
     else:
       action = self.env.action_space.sample()
 
