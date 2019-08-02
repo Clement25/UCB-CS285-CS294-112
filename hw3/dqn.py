@@ -357,16 +357,6 @@ class QLearner(object):
       print("learning_rate %f" % self.optimizer_spec.lr_schedule.value(self.t))
       if self.start_time is not None:
         print("running time %f" % ((time.time() - self.start_time) / 60.))
-      
-      logz.log_tabular('Timestep', self.t)
-      logz.log_tabular('MeanReward100Episodes', self.mean_episode_reward)
-      logz.log_tabular('BestMeanReward', self.best_mean_episode_reward)
-      logz.log_tabular('Episodes', len(episode_rewards))
-      logz.log_tabular('Exploration', self.exploration.value(self.t))
-      logz.log_tabular('LearningRate', self.optimizer_spec.lr_schedule.value(self.t))
-      if self.start_time is not None:
-        logz.log_tabular('RunningTime', ((time.time() - self.start_time) / 60.))
-      logz.dump_tabular()
 
       self.start_time = time.time()
 
