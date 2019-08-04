@@ -105,7 +105,6 @@ class Agent(object):
                 sy_ac_na: placeholder for actions
                 sy_adv_n: placeholder for advantages
         """
-        raise NotImplementedError
         sy_ob_no = tf.placeholder(shape=[None, self.ob_dim], name="ob", dtype=tf.float32)
         if self.discrete:
             sy_ac_na = tf.placeholder(shape=[None], name="ac", dtype=tf.int32) 
@@ -140,7 +139,6 @@ class Agent(object):
                 Pass in self.n_layers for the 'n_layers' argument, and
                 pass in self.size for the 'size' argument.
         """
-        raise NotImplementedError
         if self.discrete:
             # YOUR_HW2 CODE_HERE
             sy_logits_na = None
