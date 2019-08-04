@@ -173,7 +173,6 @@ class Agent(object):
         
                  This reduces the problem to just sampling z. (Hint: use tf.random_normal!)
         """
-        raise NotImplementedError
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_HW2 CODE_HERE
@@ -205,7 +204,6 @@ class Agent(object):
                 For the discrete case, use the log probability under a categorical distribution.
                 For the continuous case, use the log probability under a multivariate gaussian.
         """
-        raise NotImplementedError
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_HW2 CODE_HERE
@@ -286,7 +284,6 @@ class Agent(object):
                 env.render()
                 time.sleep(0.1)
             obs.append(ob)
-            raise NotImplementedError
             ac = self.sess.run(self.sy_sampled_ac, feed_dict={self.sy_ob_no: ob.reshape(1, -1)})  # YOUR CODE HERE
             ac = ac[0]
             acs.append(ac)
