@@ -120,7 +120,7 @@ def get_env(task, seed):
 def main():
     # Parse doubleQ param
     parser = argparse.ArgumentParser()
-    parser.add_argument('--double_q', '-dq', type='bool', default=True)
+    parser.add_argument('--double_q', '-dq', type=bool, default=True)
     args = parser.parse_args()
 
     # Get Atari games.
