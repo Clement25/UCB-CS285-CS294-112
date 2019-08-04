@@ -141,12 +141,24 @@ class Agent(object):
         """
         if self.discrete:
             # YOUR_HW2 CODE_HERE
-            sy_logits_na = None
+            sy_logits_na = build_mlp(
+                input_placeholder=sy_ob_no,
+                output_size=self.ac_dim,
+                scope="policy_mlp",
+                n_layers=self.n_layers,
+                size=self.size
+            )
             return sy_logits_na
         else:
             # YOUR_HW2 CODE_HERE
-            sy_mean = None
-            sy_logstd = None
+            sy_mean = build_mlp(
+                input_placeholder=sy_ob_no,
+                output_size=self.ac_dim,
+                scope="policy_mlp",
+                n_layers=self.n_layers,
+                size=self.size
+            )
+            sy_logstd = tf.get_variable(shape=[self.ac_dim], name="sy_logstd")
             return (sy_mean, sy_logstd)
 
     def sample_action(self, policy_parameters):
@@ -176,11 +188,12 @@ class Agent(object):
         if self.discrete:
             sy_logits_na = policy_parameters
             # YOUR_HW2 CODE_HERE
-            sy_sampled_ac = None
+            sy_sampled_ac = tf.squeeze(tf.multinomial(sy_logits_na, 1), axis=1)
         else:
             sy_mean, sy_logstd = policy_parameters
             # YOUR_HW2 CODE_HERE
-            sy_sampled_ac = None
+            z = tf.random_normal(shape=tf.shape(sy_mean), mean=0.0, stddev=1.0)
+            sy_sampled_ac = tf.exp(sy_logstd) * z + sy_mean  # need to obtain non-logstd here
         return sy_sampled_ac
 
     def get_log_prob(self, policy_parameters, sy_ac_na):
@@ -206,12 +219,14 @@ class Agent(object):
         """
         if self.discrete:
             sy_logits_na = policy_parameters
-            # YOUR_HW2 CODE_HERE
-            sy_logprob_n = None
+            sy_logprob_n = - tf.nn.sparse_softmax_cross_entropy_with_logits(
+                labels=sy_ac_na,
+                logits=sy_logits_na
+            )
         else:
             sy_mean, sy_logstd = policy_parameters
-            # YOUR_HW2 CODE_HERE
-            sy_logprob_n = None
+            sy_logprob_temp = -0.5 * ((sy_ac_na - sy_mean) / tf.exp(sy_logstd)) ** 2
+            sy_logprob_n = tf.reduce_sum(sy_logprob_temp, axis=1)
         return sy_logprob_n
 
     def build_computation_graph(self):
