@@ -31,7 +31,8 @@ def atari_model(img_in, num_actions, scope, reuse=False):
 
 def atari_learn(env,
                 session,
-                num_timesteps):
+                num_timesteps,
+                double_q):
     # This is just a rough estimate
     num_iterations = float(num_timesteps) / 4.0
 
@@ -76,7 +77,7 @@ def atari_learn(env,
         frame_history_len=4,
         target_update_freq=10000,
         grad_norm_clipping=10,
-        double_q=True
+        double_q=double_q
     )
     env.close()
 
@@ -117,6 +118,11 @@ def get_env(task, seed):
     return env
 
 def main():
+    # Parse doubleQ param
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--double_q', '-dq', type='bool', default=True)
+    args = parser.parse_args()
+
     # Get Atari games.
     task = gym.make('PongNoFrameskip-v4')
 
@@ -125,7 +131,8 @@ def main():
     print('random seed = %d' % seed)
     env = get_env(task, seed)
     session = get_session()
-    atari_learn(env, session, num_timesteps=1e7)
+    atari_learn(env, session, num_timesteps=1e7,
+            double_q=args.double_q)
 
 if __name__ == "__main__":
     main()
