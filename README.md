@@ -8,13 +8,14 @@ I faced many issues when running the code so I listed here just to save your tim
 
 ### 1. gcc compilation error when compiling mujoco-py
 To run code of this repository, your gcc version must no less than 7. I use gcc 5.4.0 at the first time I met the error, later on I update to gcc 7.3.0 and there's no problem again.  
-To upgrade gcc, use the commands below
+  
+To upgrade gcc, use the commands below.
 ```
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 sudo apt-get install gcc-7 g++-7
 ``` 
-Until here you just installed new version gcc but haven't changed the default version to it. To achieve this, modify the origin soft link of gcc
+Here you just installed new version gcc but haven't changed the default version to it. To achieve this, modify the soft link of gcc in folder /usr/bin
 ```
 cd /usr/bin
 sudo ln -snf gcc-7 gcc
