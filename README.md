@@ -20,7 +20,7 @@ cd /usr/bin
 sudo ln -snf gcc-7 gcc
 ```
 
-### 2. Value error: numpy. ufunc size changed
+### 2. Value error: numpy.ufunc size changed
 This happens due to numpy version is too old, upgrade numpy to 1.16.0 and then it will disappear
 ```
 pip install numpy==1.16.0
