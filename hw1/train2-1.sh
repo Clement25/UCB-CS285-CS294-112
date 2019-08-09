@@ -1,3 +1,3 @@
 # !/bin/bash
 
-python run_expert.py experts/Humanoid-v1.pkl Humanoid-v1 --render --num_rollouts 20
+python run_expert.py experts/Humanoid-v2.pkl Humanoid-v2 --render --num_rollouts 20
