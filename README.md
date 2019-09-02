@@ -1,6 +1,6 @@
 # UCB-RL
 
-This repository contains my own solution on the homework of UCB's reinforcement learning course.  
+This repository contains my own solution to the homework of UCB's reinforcement learning course.  
 
 Now I have finished hw2 and hw3 beacause they are related to my current project. The ramining part may be achieved in the future.
 
