@@ -2,7 +2,7 @@
 
 This repository contains my own solution to the homework of UCB's reinforcement learning course.  
 
-Now I have finished hw2 and hw3 beacause they are related to my current project. The remaining part may be achieved in the future.
+Now I have finished hw1, hw2 and hw3 beacause they are related to my current project. The remaining part may be achieved in the future.
 
 ## Common Issues
 
